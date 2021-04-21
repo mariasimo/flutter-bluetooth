@@ -15,28 +15,33 @@ class BluetoothApp extends StatefulWidget {
 
 class _BluetoothAppState extends State<BluetoothApp> {
   BluetoothState bluetoothState = BluetoothState.UNKNOWN;
-
-  FlutterBluetoothSerial bluetoothIntance = FlutterBluetoothSerial.instance;
-
-  int deviceState; // used for tracking he Bluetooth device connection state
-
+  FlutterBluetoothSerial bluetoothInstance = FlutterBluetoothSerial.instance;
   List<BluetoothDevice> devicesList = []; // var for storing the devices list
+  BluetoothConnection connection; // Track connection with the remote device
+  bool get isConnected =>
+      connection != null && connection.isConnected; // still connected to BT
+  bool isDisconnecting = false; // disconnection is in progress
+
+  @override
+  void dispose() {
+    if (isConnected) {
+      isDisconnecting = true;
+      connection.dispose();
+      connection = null;
+    }
+    super.dispose();
+  }
 
   Future<void> getPairedDevices() async {
     List<BluetoothDevice> devices = [];
-
     try {
-      devices = await bluetoothIntance.getBondedDevices();
+      devices = await bluetoothInstance.getBondedDevices();
     } on PlatformException {
       print("Error");
     }
-    // It is an error to call [setState] unless [mounted] is true.
     if (!mounted) return;
-
-    // Store the [devices] list in the [_devicesList]
-    setState(() {
-      devicesList = devices;
-    });
+    print({devicesList});
+    setState(() => devicesList = devices);
   }
 
   Future<void> enableBluetooth() async {
@@ -54,15 +59,25 @@ class _BluetoothAppState extends State<BluetoothApp> {
   @override
   void initState() {
     super.initState();
-    // Get current state (ON/OFF)
     FlutterBluetoothSerial.instance.state.then((state) {
+      print({"initState", state});
       setState(() {
         bluetoothState = state;
       });
     });
 
-    deviceState = 0; // neutral
-    enableBluetooth(); // request permission to turn on Bluetooth as the app starts up
+    enableBluetooth();
+
+    // Listen for futher state changes
+    FlutterBluetoothSerial.instance
+        .onStateChanged()
+        .listen((BluetoothState state) {
+      setState(() {
+        bluetoothState = state;
+        // For retrieving the paired devices list
+        getPairedDevices();
+      });
+    });
   }
 
   @override
@@ -71,20 +86,42 @@ class _BluetoothAppState extends State<BluetoothApp> {
       appBar: AppBar(
         title: Text('Testing Bluetooth'),
       ),
-      body: ListView.builder(
-        itemCount: devicesList.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-            child: Card(
-              child: ListTile(
-                onTap: () {},
-                title: Text(devicesList[index].name),
-                leading: CircleAvatar(),
-              ),
+      body: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            SwitchListTile(
+              title: const Text('Enable Bluetooth'),
+              value: bluetoothState.isEnabled,
+              onChanged: (bool value) {
+                print({'isBTEnabled', value});
+                // Do the request and update with the true value then
+                future() async {
+                  // async lambda seems to not working
+                  if (value)
+                    await FlutterBluetoothSerial.instance.requestEnable();
+                  else
+                    await FlutterBluetoothSerial.instance.requestDisable();
+                }
+
+                future().then((_) {
+                  print({'isBTEnabled', value});
+                  setState(() {});
+                });
+              },
             ),
-          );
-        },
+            ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: devicesList.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                        onTap: () {}, title: Text(devicesList[index].name)),
+                  );
+                })
+          ],
+        ),
       ),
     );
   }

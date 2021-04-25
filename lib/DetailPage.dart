@@ -25,12 +25,21 @@ class _DetailPage extends State<DetailPage> {
   _DataFromDevice pieceOfData;
   List<_DataFromDevice> dataFromDevice = [];
   List<String> receivedData = [];
-  final TextEditingController textEditingController =
-      new TextEditingController();
-  final ScrollController listScrollController = new ScrollController();
   bool isConnecting = true;
   bool get isConnected => connection != null && connection.isConnected;
   bool isDisconnecting = false;
+
+  void _timer() {
+    Future.delayed(Duration(seconds: 1)).then((_) {
+      if (this.mounted) {
+        setState(() {
+          print("1 second passed");
+          _sendMessage("monitor*");
+        });
+      }
+      _timer();
+    });
+  }
 
   @override
   void initState() {
@@ -44,11 +53,10 @@ class _DetailPage extends State<DetailPage> {
         isDisconnecting = false;
       });
 
+      _timer();
       _sendMessage("monitor*");
 
       connection.input.listen(_onDataReceived).onDone(() {
-        print({"received data", receivedData});
-
         if (isDisconnecting) {
           print('Disconnecting locally!');
         } else {
@@ -171,29 +179,30 @@ class _DetailPage extends State<DetailPage> {
     Iterable<List<String>> splittedLines =
         lines.map((line) => line.split(":")).where((x) => x.length >= 2);
 
-    setState(() {
-      splittedLines.forEach((e) {
-        bool isAlreadyInList = dataFromDevice
-            .where((element) => element.dataKey == e[0])
-            .isNotEmpty;
+    if (this.mounted) {
+      setState(() {
+        splittedLines.forEach((e) {
+          bool isAlreadyInList = dataFromDevice
+              .where((element) => element.dataKey == e[0])
+              .isNotEmpty;
 
-        if (isAlreadyInList) {
-          dataFromDevice = dataFromDevice.map((element) {
-            return element.dataKey == e[0]
-                ? _DataFromDevice(e[0], e[1])
-                : element;
-          }).toList();
-        } else {
-          dataFromDevice.add(_DataFromDevice(e[0], e[1]));
-        }
+          if (isAlreadyInList) {
+            dataFromDevice = dataFromDevice.map((element) {
+              return element.dataKey == e[0]
+                  ? _DataFromDevice(e[0], e[1])
+                  : element;
+            }).toList();
+          } else {
+            dataFromDevice.add(_DataFromDevice(e[0], e[1]));
+          }
+        });
       });
-    });
+    }
   }
 
   //function that receives "monitor*" message
   void _sendMessage(String text) async {
     text = text.trim();
-    textEditingController.clear();
 
     if (text.length > 0) {
       try {

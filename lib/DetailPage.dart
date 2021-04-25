@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:core';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -6,34 +7,29 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class DetailPage extends StatefulWidget {
   final BluetoothDevice server;
-
   const DetailPage({this.server});
 
   @override
   _DetailPage createState() => new _DetailPage();
 }
 
-class _Message {
-  int whom;
-  String text;
+class _DataFromDevice {
+  String dataKey;
+  String dataValue;
 
-  _Message(this.whom, this.text);
+  _DataFromDevice(this.dataKey, this.dataValue);
 }
 
 class _DetailPage extends State<DetailPage> {
-  static final clientID = 0;
   BluetoothConnection connection;
-
-  List<_Message> messages = [];
-  String _messageBuffer = '';
-
+  _DataFromDevice pieceOfData;
+  List<_DataFromDevice> dataFromDevice = [];
+  List<String> receivedData = [];
   final TextEditingController textEditingController =
       new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
-
   bool isConnecting = true;
   bool get isConnected => connection != null && connection.isConnected;
-
   bool isDisconnecting = false;
 
   @override
@@ -48,13 +44,11 @@ class _DetailPage extends State<DetailPage> {
         isDisconnecting = false;
       });
 
+      _sendMessage("monitor*");
+
       connection.input.listen(_onDataReceived).onDone(() {
-        // Example: Detect which side closed the connection
-        // There should be `isDisconnecting` flag to show are we are (locally)
-        // in middle of disconnecting process, should be set before calling
-        // `dispose`, `finish` or `close`, which all causes to disconnect.
-        // If we except the disconnection, `onDone` should be fired as result.
-        // If we didn't except this (no flag set), it means closing by remote.
+        print({"received data", receivedData});
+
         if (isDisconnecting) {
           print('Disconnecting locally!');
         } else {
@@ -72,7 +66,6 @@ class _DetailPage extends State<DetailPage> {
 
   @override
   void dispose() {
-    // Avoid memory leak (`setState` after dispose) and disconnect
     if (isConnected) {
       isDisconnecting = true;
       connection.dispose();
@@ -84,82 +77,67 @@ class _DetailPage extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Row> list = messages.map((_message) {
-      return Row(
-        children: <Widget>[
-          Container(
-            child: Text(
-                (text) {
-                  return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
-                }(_message.text.trim()),
-                style: TextStyle(color: Colors.white)),
-            padding: EdgeInsets.all(12.0),
-            margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-            width: 222.0,
-            decoration: BoxDecoration(
-                color:
-                    _message.whom == clientID ? Colors.blueAccent : Colors.grey,
-                borderRadius: BorderRadius.circular(7.0)),
-          ),
-        ],
-        mainAxisAlignment: _message.whom == clientID
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-      );
-    }).toList();
-
     return Scaffold(
       appBar: AppBar(
           title: (isConnecting
-              ? Text('Connecting chat to ' + widget.server.name + '...')
+              ? Text('Connecting to ' + widget.server.name + '...')
               : isConnected
-                  ? Text('Live chat with ' + widget.server.name)
-                  : Text('Chat log with ' + widget.server.name))),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Flexible(
-              child: ListView(
-                  padding: const EdgeInsets.all(12.0),
-                  controller: listScrollController,
-                  children: list),
-            ),
-            Row(
-              children: <Widget>[
-                Flexible(
+                  ? Text('Data from device ' + widget.server.name)
+                  : Text('Not connected:' + widget.server.name))),
+      body: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {
+              _sendMessage("monitor*");
+            },
+            child: Text("Refrescar"),
+          ),
+          Flexible(
+            child: ListView.builder(
+              itemCount: dataFromDevice.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
                   child: Container(
-                    margin: const EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      style: const TextStyle(fontSize: 15.0),
-                      controller: textEditingController,
-                      decoration: InputDecoration.collapsed(
-                        hintText: isConnecting
-                            ? 'Wait until connected...'
-                            : isConnected
-                                ? 'Type your message...'
-                                : 'Chat got disconnected',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                      ),
-                      enabled: isConnected,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey[800],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 24, horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          dataFromDevice[index].dataKey,
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        Text(
+                          dataFromDevice[index].dataValue,
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: isConnected
-                          ? () => _sendMessage(textEditingController.text)
-                          : null),
-                ),
-              ],
-            )
-          ],
-        ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
+  // Function that handles data received from ESP32
   void _onDataReceived(Uint8List data) {
     // Allocate buffer for parsed data
     int backspacesCounter = 0;
@@ -187,49 +165,47 @@ class _DetailPage extends State<DetailPage> {
 
     // Create message if there is new line character
     String dataString = String.fromCharCodes(buffer);
-    int index = buffer.indexOf(13);
-    if (~index != 0) {
-      setState(() {
-        messages.add(
-          _Message(
-            1,
-            backspacesCounter > 0
-                ? _messageBuffer.substring(
-                    0, _messageBuffer.length - backspacesCounter)
-                : _messageBuffer + dataString.substring(0, index),
-          ),
-        );
-        _messageBuffer = dataString.substring(index);
+    receivedData.add(dataString);
+    LineSplitter ls = new LineSplitter();
+    List<String> lines = ls.convert(dataString);
+    Iterable<List<String>> splittedLines =
+        lines.map((line) => line.split(":")).where((x) => x.length >= 2);
+
+    setState(() {
+      splittedLines.forEach((e) {
+        bool isAlreadyInList = dataFromDevice
+            .where((element) => element.dataKey == e[0])
+            .isNotEmpty;
+
+        if (isAlreadyInList) {
+          dataFromDevice = dataFromDevice.map((element) {
+            return element.dataKey == e[0]
+                ? _DataFromDevice(e[0], e[1])
+                : element;
+          }).toList();
+        } else {
+          dataFromDevice.add(_DataFromDevice(e[0], e[1]));
+        }
       });
-    } else {
-      _messageBuffer = (backspacesCounter > 0
-          ? _messageBuffer.substring(
-              0, _messageBuffer.length - backspacesCounter)
-          : _messageBuffer + dataString);
-    }
+    });
   }
 
+  //function that receives "monitor*" message
   void _sendMessage(String text) async {
     text = text.trim();
     textEditingController.clear();
 
     if (text.length > 0) {
       try {
-        connection.output.add(utf8.encode(text + "\r\n"));
+        connection.output.add(utf8.encode(text));
         await connection.output.allSent;
 
         setState(() {
-          messages.add(_Message(clientID, text));
-        });
-
-        Future.delayed(Duration(milliseconds: 333)).then((_) {
-          listScrollController.animateTo(
-              listScrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 333),
-              curve: Curves.easeOut);
+          print("message sent");
         });
       } catch (e) {
         // Ignore error, but notify state
+        print({"error": e});
         setState(() {});
       }
     }

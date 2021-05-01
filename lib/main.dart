@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './MainPage.dart';
+import 'pages/Dashboard.dart';
 import 'theme/theme.dart' as Theme;
 
 void main() => runApp(new ExampleApplication());

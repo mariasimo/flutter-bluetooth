@@ -2,39 +2,46 @@
 import 'package:flutter/material.dart';
 
 final ThemeData BBThemeData = new ThemeData(
-  backgroundColor: BBColors.grey[500],
-  brightness: Brightness.light,
-  primarySwatch: MaterialColor(BBColors.blue[500].value, BBColors.blue),
-  primaryColor: BBColors.blue[500],
-  primaryColorBrightness: Brightness.light,
-  accentColor: BBColors.green[500],
-  accentColorBrightness: Brightness.light,
+    backgroundColor: BBColors.grey[50],
+    brightness: Brightness.light,
+    primarySwatch: MaterialColor(BBColors.blue[500].value, BBColors.blue),
+    primaryColor: BBColors.blue[500],
+    primaryColorBrightness: Brightness.light,
+    accentColor: BBColors.green[500],
+    accentColorBrightness: Brightness.light,
 
-  // Define the default font family.
-  fontFamily: 'Poppins',
-
-  textTheme: TextTheme(
-    headline1: TextStyle(
-      fontSize: 24.0,
-      fontWeight: FontWeight.w600,
-      color: BBColors.grey[900],
-    ),
-    subtitle1: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-    button: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
-  ),
-
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      primary: BBColors.blue[500],
-      textStyle: TextStyle(color: Colors.white),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+    // Define the default font family.
+    fontFamily: 'Poppins',
+    textTheme: TextTheme(
+      headline1: TextStyle(
+        fontSize: 24.0,
+        fontWeight: FontWeight.w600,
+        color: BBColors.grey[900],
       ),
-      elevation: 0,
-      padding: EdgeInsets.all(14),
+      headline3: TextStyle(
+        fontSize: 14.0,
+        fontWeight: FontWeight.w600,
+        color: BBColors.grey[900],
+      ),
+      subtitle1: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+      button: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
     ),
-  ),
-);
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        primary: BBColors.blue[500],
+        textStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        elevation: 0,
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 14),
+      ),
+    ),
+    dividerTheme: DividerThemeData(color: BBColors.grey[300]));
 
 class BBColors {
   BBColors._(); // this basically makes it so you can instantiate this class

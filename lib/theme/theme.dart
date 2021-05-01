@@ -24,16 +24,13 @@ final ThemeData BBThemeData = new ThemeData(
         color: BBColors.grey[900],
       ),
       subtitle1: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-      button: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+      button: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         primary: BBColors.blue[500],
         textStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 14.0,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 1),
+            color: Colors.white, fontSize: 15.0, fontWeight: FontWeight.w500),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),

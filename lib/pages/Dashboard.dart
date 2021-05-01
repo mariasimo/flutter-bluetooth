@@ -14,10 +14,14 @@ class MainPage extends StatefulWidget {
 
 class _MainPage extends State<MainPage> {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
+  BluetoothDevice _selectedDevice;
+  bool _hasSelectedDevice = false;
 
   @override
   void initState() {
     super.initState();
+
+    print(_selectedDevice);
 
     // Get current state
     FlutterBluetoothSerial.instance.state.then((state) {
@@ -56,7 +60,11 @@ class _MainPage extends State<MainPage> {
 
     if (selectedDevice != null) {
       print('Connect -> selected ' + selectedDevice.address);
-      _deviceDetail(context, selectedDevice);
+      // _deviceDetail(context, selectedDevice);
+      setState(() {
+        _selectedDevice = selectedDevice;
+        _hasSelectedDevice = true;
+      });
     } else {
       print('Connect -> no device selected');
     }
@@ -97,14 +105,18 @@ class _MainPage extends State<MainPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Dashboard',
-                style: Theme.BBThemeData.textTheme.headline1,
+              Container(
+                child: Text(
+                  'Dashboard',
+                  style: Theme.BBThemeData.textTheme.headline1,
+                ),
+                padding: EdgeInsets.only(bottom: 16),
               ),
-              SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.only(bottom: 40),
-                child: new EmptyCard(handleButtonPress: seePairedDevices),
+                child: _hasSelectedDevice
+                    ? Text("here goes the card")
+                    : new EmptyCard(handleButtonPress: seePairedDevices),
               ),
               Divider(),
               Padding(
@@ -122,17 +134,17 @@ class _MainPage extends State<MainPage> {
                 margin: EdgeInsets.only(bottom: 12),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   child: SwitchListTile(
                     title: _bluetoothState.isEnabled
                         ? Text(
                             'Activado',
                             style: Theme.BBThemeData.textTheme.subtitle2
-                                .copyWith(color: Theme.BBColors.grey[500]),
+                                .copyWith(color: Theme.BBColors.grey[300]),
                           )
                         : Text('Desactivado',
                             style: Theme.BBThemeData.textTheme.subtitle2
-                                .copyWith(color: Theme.BBColors.grey[500])),
+                                .copyWith(color: Theme.BBColors.grey[300])),
                     value: _bluetoothState.isEnabled,
                     onChanged: handleBTEnablement,
                   ),
@@ -150,7 +162,7 @@ class _MainPage extends State<MainPage> {
                       ),
                       style: TextButton.styleFrom(
                         primary: Theme.BBThemeData.primaryColor,
-                        backgroundColor: Theme.BBColors.blue[50],
+                        backgroundColor: Theme.BBColors.blue[100],
                       ),
                     ),
                   ),

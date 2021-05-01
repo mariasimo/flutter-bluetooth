@@ -5,7 +5,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import './SelectBondedDevicePage.dart';
 import './DetailPage.dart';
-import 'theme/index.dart' as Theme;
+import 'theme/theme.dart' as Theme;
 import 'components/empty_card.dart';
 
 class MainPage extends StatefulWidget {
@@ -72,9 +72,9 @@ class _MainPage extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.CompanyColors.grey[50],
+      backgroundColor: Theme.BBColors.grey[50],
       appBar: AppBar(
-        backgroundColor: Theme.CompanyColors.grey[50],
+        backgroundColor: Theme.BBColors.grey[50],
         elevation: 0,
       ),
       body: SafeArea(
@@ -85,7 +85,7 @@ class _MainPage extends State<MainPage> {
             children: [
               Text(
                 'Dashboard',
-                style: Theme.CompanyThemeData.textTheme.headline1,
+                style: Theme.BBThemeData.textTheme.headline1,
               ),
               SizedBox(height: 16),
               emptyCard(seePairedDevices),

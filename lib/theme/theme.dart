@@ -1,14 +1,13 @@
 // https://gist.github.com/mikemimik/5ac2fa98fe6d132098603c1bd40263d5
 import 'package:flutter/material.dart';
 
-final ThemeData CompanyThemeData = new ThemeData(
-  backgroundColor: CompanyColors.grey[500],
+final ThemeData BBThemeData = new ThemeData(
+  backgroundColor: BBColors.grey[500],
   brightness: Brightness.light,
-  primarySwatch:
-      MaterialColor(CompanyColors.blue[500].value, CompanyColors.blue),
-  primaryColor: CompanyColors.blue[500],
+  primarySwatch: MaterialColor(BBColors.blue[500].value, BBColors.blue),
+  primaryColor: BBColors.blue[500],
   primaryColorBrightness: Brightness.light,
-  accentColor: CompanyColors.green[500],
+  accentColor: BBColors.green[500],
   accentColorBrightness: Brightness.light,
 
   // Define the default font family.
@@ -18,7 +17,7 @@ final ThemeData CompanyThemeData = new ThemeData(
     headline1: TextStyle(
       fontSize: 24.0,
       fontWeight: FontWeight.w600,
-      color: CompanyColors.grey[900],
+      color: BBColors.grey[900],
     ),
     subtitle1: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
     button: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
@@ -26,7 +25,7 @@ final ThemeData CompanyThemeData = new ThemeData(
 
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      primary: CompanyColors.blue[500],
+      primary: BBColors.blue[500],
       textStyle: TextStyle(color: Colors.white),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -37,23 +36,21 @@ final ThemeData CompanyThemeData = new ThemeData(
   ),
 );
 
-class CompanyColors {
-  CompanyColors._(); // this basically makes it so you can instantiate this class
+class BBColors {
+  BBColors._(); // this basically makes it so you can instantiate this class
 
-  static const MaterialColor grey =
-      MaterialColor(_greyPrimaryValue, <int, Color>{
+  static const Map<int, Color> grey = const <int, Color>{
     50: Color(0xFFF4F5F7),
     100: Color(0xFFDFE6EA),
     200: Color(0xFFA8B0B4),
     300: Color(0xFF859096),
     400: Color(0xFF688191),
-    500: Color(_greyPrimaryValue),
+    500: Color(0xFF516069),
     600: Color(0xFF4A5861),
     700: Color(0xFF404E56),
     800: Color(0xFF37444C),
     900: Color(0xFF1F2427),
-  });
-  static const int _greyPrimaryValue = 0xFF516069;
+  };
 
   static const Map<int, Color> blue = const <int, Color>{
     50: Color(0xFFE8F0FF),

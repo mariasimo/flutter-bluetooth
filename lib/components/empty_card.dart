@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../theme/index.dart' as Theme;
+import '../theme/theme.dart' as Theme;
 
 Card emptyCard(seePairedDevices) {
   return Card(
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
-        side: BorderSide(color: Theme.CompanyColors.grey[100])),
+        side: BorderSide(color: Theme.BBColors.grey[100])),
     elevation: 0,
     margin: EdgeInsets.all(0),
     child: Container(
@@ -15,8 +15,8 @@ Card emptyCard(seePairedDevices) {
           Text(
             "No estás conectado a ningún dispositivo",
             textAlign: TextAlign.center,
-            style: Theme.CompanyThemeData.textTheme.subtitle1
-                .copyWith(color: Theme.CompanyColors.grey[400]),
+            style: Theme.BBThemeData.textTheme.subtitle1
+                .copyWith(color: Theme.BBColors.grey[400]),
           ),
           SizedBox(height: 16),
           Row(

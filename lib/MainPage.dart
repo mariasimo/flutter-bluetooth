@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth/components/empty_card.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import './SelectBondedDevicePage.dart';
 import './DetailPage.dart';
-
-// import './helpers/LineChart.dart';
+import 'theme/index.dart' as Theme;
+import 'components/empty_card.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -14,9 +15,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPage extends State<MainPage> {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
-
-  String _address = "...";
-  String _name = "...";
 
   @override
   void initState() {
@@ -36,20 +34,7 @@ class _MainPage extends State<MainPage> {
       }
       await Future.delayed(Duration(milliseconds: 0xDD));
       return true;
-    }).then((_) {
-      // Update the address field
-      FlutterBluetoothSerial.instance.address.then((address) {
-        setState(() {
-          _address = address;
-        });
-      });
-    });
-
-    FlutterBluetoothSerial.instance.name.then((name) {
-      setState(() {
-        _name = name;
-      });
-    });
+    }).then((_) {});
 
     // Listen for futher state changes
     FlutterBluetoothSerial.instance
@@ -61,6 +46,23 @@ class _MainPage extends State<MainPage> {
     });
   }
 
+  void seePairedDevices() async {
+    final BluetoothDevice selectedDevice = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return SelectBondedDevicePage(checkAvailability: false);
+        },
+      ),
+    );
+
+    if (selectedDevice != null) {
+      print('Connect -> selected ' + selectedDevice.address);
+      _deviceDetail(context, selectedDevice);
+    } else {
+      print('Connect -> no device selected');
+    }
+  }
+
   @override
   void dispose() {
     FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
@@ -70,76 +72,56 @@ class _MainPage extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.CompanyColors.grey[50],
       appBar: AppBar(
-        title: const Text('Flutter Bluetooth Serial'),
+        backgroundColor: Theme.CompanyColors.grey[50],
+        elevation: 0,
       ),
-      body: Container(
-        child: ListView(
-          children: <Widget>[
-            Divider(),
-            ListTile(title: const Text('General')),
-            SwitchListTile(
-              title: const Text('Enable Bluetooth'),
-              value: _bluetoothState.isEnabled,
-              onChanged: (bool value) {
-                // Do the request and update with the true value then
-                future() async {
-                  // async lambda seems to not working
-                  if (value)
-                    await FlutterBluetoothSerial.instance.requestEnable();
-                  else
-                    await FlutterBluetoothSerial.instance.requestDisable();
-                }
-
-                future().then((_) {
-                  setState(() {});
-                });
-              },
-            ),
-            ListTile(
-              title: const Text('Bluetooth status'),
-              subtitle: Text(_bluetoothState.toString()),
-              trailing: ElevatedButton(
-                child: const Text('Settings'),
-                onPressed: () {
-                  FlutterBluetoothSerial.instance.openSettings();
-                },
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Dashboard',
+                style: Theme.CompanyThemeData.textTheme.headline1,
               ),
-            ),
-            ListTile(
-              title: const Text('Local adapter address'),
-              subtitle: Text(_address),
-            ),
-            ListTile(
-              title: const Text('Local adapter name'),
-              subtitle: Text(_name),
-              onLongPress: null,
-            ),
-            Divider(),
-            ListTile(title: const Text('Devices connection')),
-            ListTile(
-              title: ElevatedButton(
-                child: const Text('Connect to paired device to chat'),
-                onPressed: () async {
-                  final BluetoothDevice selectedDevice =
-                      await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return SelectBondedDevicePage(checkAvailability: false);
-                      },
-                    ),
-                  );
-
-                  if (selectedDevice != null) {
-                    print('Connect -> selected ' + selectedDevice.address);
-                    _deviceDetail(context, selectedDevice);
-                  } else {
-                    print('Connect -> no device selected');
+              SizedBox(height: 16),
+              emptyCard(seePairedDevices),
+              SizedBox(height: 16),
+              Divider(),
+              SwitchListTile(
+                title: const Text('Enable Bluetooth'),
+                value: _bluetoothState.isEnabled,
+                onChanged: (bool value) {
+                  // Do the request and update with the true value then
+                  future() async {
+                    // async lambda seems to not working
+                    if (value)
+                      await FlutterBluetoothSerial.instance.requestEnable();
+                    else
+                      await FlutterBluetoothSerial.instance.requestDisable();
                   }
+
+                  future().then((_) {
+                    setState(() {});
+                  });
                 },
               ),
-            ),
-          ],
+              ListTile(
+                title: const Text('Bluetooth status'),
+                subtitle: Text(_bluetoothState.toString()),
+                trailing: ElevatedButton(
+                  child: const Text('Settings'),
+                  onPressed: () {
+                    FlutterBluetoothSerial.instance.openSettings();
+                  },
+                ),
+              ),
+              Divider(),
+            ],
+          ),
         ),
       ),
     );

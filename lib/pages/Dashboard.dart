@@ -6,6 +6,7 @@ import 'SelectBondedDevicePage.dart';
 import 'DetailPage.dart';
 import '../theme/theme.dart' as Theme;
 import '../components/EmptyCard.dart';
+import '../components/DeviceCard.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -115,12 +116,12 @@ class _MainPage extends State<MainPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 40),
                 child: _hasSelectedDevice
-                    ? Text("here goes the card")
+                    ? new DeviceCard(selectedDevice: _selectedDevice)
                     : new EmptyCard(handleButtonPress: seePairedDevices),
               ),
               Divider(),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   "Ajustes Bluetooth",
                   style: Theme.BBThemeData.textTheme.headline3,

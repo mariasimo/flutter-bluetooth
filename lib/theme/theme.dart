@@ -90,4 +90,17 @@ class BBColors {
     800: Color(0xFF46D88A),
     900: Color(0xFF34D079),
   };
+
+  static const Map<int, Color> navy = const <int, Color>{
+    50: Color(0xFFE1E7F0),
+    100: Color(0xFFB3C2D9),
+    200: Color(0xFF8099BF),
+    300: Color(0xFF4D70A5),
+    400: Color(0xFF275292),
+    500: Color(0xFF01337F),
+    600: Color(0xFF012E77),
+    700: Color(0xFF01276C),
+    800: Color(0xFF012062),
+    900: Color(0xFF00144F),
+  };
 }

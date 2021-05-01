@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'dart:core';
 
 import 'SelectBondedDevicePage.dart';
 import 'DetailPage.dart';
@@ -15,14 +16,13 @@ class MainPage extends StatefulWidget {
 
 class _MainPage extends State<MainPage> {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
+  BluetoothConnection connection;
   BluetoothDevice _selectedDevice;
   bool _hasSelectedDevice = false;
 
   @override
   void initState() {
     super.initState();
-
-    print(_selectedDevice);
 
     // Get current state
     FlutterBluetoothSerial.instance.state.then((state) {
@@ -114,9 +114,11 @@ class _MainPage extends State<MainPage> {
                 padding: EdgeInsets.only(bottom: 16),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 40),
+                padding: const EdgeInsets.only(bottom: 32),
                 child: _hasSelectedDevice
-                    ? new DeviceCard(selectedDevice: _selectedDevice)
+                    ? new DeviceCard(
+                        selectedDevice: _selectedDevice,
+                        handleExploreDevicesButton: seePairedDevices)
                     : new EmptyCard(handleButtonPress: seePairedDevices),
               ),
               Divider(),
@@ -158,7 +160,7 @@ class _MainPage extends State<MainPage> {
                       onPressed: FlutterBluetoothSerial.instance.openSettings,
                       label: Text('Vincular dispositivos'),
                       icon: Icon(
-                        Icons.search,
+                        Icons.bluetooth,
                         size: 24,
                       ),
                       style: TextButton.styleFrom(

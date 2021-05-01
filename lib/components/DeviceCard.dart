@@ -25,11 +25,6 @@ class DeviceCard extends StatelessWidget {
           ),
         ),
         Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: Theme.BBColors.grey[100])),
-          elevation: 0,
-          margin: EdgeInsets.all(0),
           child: Container(
             padding: EdgeInsets.all(21),
             child: Column(

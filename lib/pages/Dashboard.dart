@@ -8,12 +8,12 @@ import '../theme/theme.dart' as Theme;
 import '../components/EmptyCard.dart';
 import '../components/DeviceCard.dart';
 
-class MainPage extends StatefulWidget {
+class Dashboard extends StatefulWidget {
   @override
-  _MainPage createState() => new _MainPage();
+  _Dashboard createState() => new _Dashboard();
 }
 
-class _MainPage extends State<MainPage> {
+class _Dashboard extends State<Dashboard> {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
   BluetoothConnection connection;
   BluetoothDevice _selectedDevice;

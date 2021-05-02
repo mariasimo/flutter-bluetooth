@@ -9,7 +9,6 @@ class BluetoothDeviceListEntry extends Card {
     int rssi,
     GestureTapCallback onTap,
     GestureLongPressCallback onLongPress,
-    bool enabled = true,
     List<Color> colorCombo,
     int iconNumber,
   }) : super(

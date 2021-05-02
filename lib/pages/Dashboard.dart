@@ -65,7 +65,7 @@ class _Dashboard extends State<Dashboard> {
     final BluetoothDevice selectedDevice = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return SelectBondedDevicePage(checkAvailability: false);
+          return SelectBondedDevicePage();
         },
       ),
     );

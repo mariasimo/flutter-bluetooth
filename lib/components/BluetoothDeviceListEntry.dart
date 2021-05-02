@@ -1,3 +1,4 @@
+import 'package:bluetooth_bridge/components/DeviceBadge.dart';
 import 'package:flutter/material.dart';
 import 'package:bluetooth_bridge/theme/theme.dart' as Theme;
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,22 +25,8 @@ class BluetoothDeviceListEntry extends Card {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(right: 20),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            color: device.colorCombo.first,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: SvgPicture.asset(
-                                'assets/device-${device.iconNumber}.svg',
-                                color: device.colorCombo[1],
-                                width: 25,
-                              ),
-                            ),
-                          ),
-                        ),
+                            margin: EdgeInsets.only(right: 20),
+                            child: DeviceBadge(selectedDevice: device)),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

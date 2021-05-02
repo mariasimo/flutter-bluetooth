@@ -2,9 +2,8 @@ import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
 import 'package:bluetooth_bridge/utils/deviceDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:bluetooth_bridge/pages/DetailPage.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:bluetooth_bridge/components/DeviceBadge.dart';
 import '../theme/theme.dart' as Theme;
-import 'package:flutter_svg/flutter_svg.dart';
 
 class DeviceCard extends StatefulWidget {
   final BluetoothStyledDevice selectedDevice;
@@ -66,20 +65,8 @@ class _DeviceCardState extends State<DeviceCard> {
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.only(right: 20),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
-                          ),
-                          color: widget.selectedDevice.colorCombo[0],
-                          child: Padding(
-                            padding: const EdgeInsets.all(32),
-                            child: SvgPicture.asset(
-                              'assets/device-${widget.selectedDevice.iconNumber}.svg',
-                              width: 40,
-                              color: widget.selectedDevice.colorCombo[1],
-                            ),
-                          ),
-                        ),
+                        child: DeviceBadge(
+                            selectedDevice: widget.selectedDevice, size: "big"),
                       ),
                       Expanded(
                         child: Column(

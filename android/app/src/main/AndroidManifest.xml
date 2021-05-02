@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.flutter_bluetooth">
+    package="com.example.bluetooth_bridge">
     <uses-permission android:name="android.permission.BLUETOOTH" />  
 	  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />  
 	  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> 
    <application
-        android:label="flutter_bluetooth"
+        android:label="Bluetooth Bridge"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

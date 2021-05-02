@@ -94,6 +94,7 @@ class _DetailPage extends State<DetailPage> {
                   : Text('Not connected:' + widget.server.name))),
       body: Column(
         children: <Widget>[
+          Text(widget.server.isConnected ? "con" : "not"),
           ElevatedButton(
             onPressed: () {
               _sendMessage("monitor*");

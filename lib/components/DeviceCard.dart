@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bluetooth_bridge/pages/DetailPage.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../theme/theme.dart' as Theme;
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,10 +7,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 class DeviceCard extends StatefulWidget {
   final BluetoothDevice selectedDevice;
   final Function handleExploreDevicesButton;
+  final Function closeDeviceConnection;
+
   DeviceCard({
     Key key,
     @required this.selectedDevice,
     @required this.handleExploreDevicesButton,
+    @required this.closeDeviceConnection,
   }) : super(key: key);
 
   @override
@@ -17,27 +21,21 @@ class DeviceCard extends StatefulWidget {
 }
 
 class _DeviceCardState extends State<DeviceCard> {
-  bool isDeviceConnected = false;
-  bool isConnecting = true;
   final String assetName = 'assets/device-1.svg';
-
-  void checkConnection() async {
-    BluetoothConnection.toAddress(widget.selectedDevice.address)
-        .then((_connection) {
-      isDeviceConnected = _connection.isConnected;
-      setState(() {
-        isConnecting = false;
-      });
-    }).catchError((error) {
-      print('Cannot connect, exception occured');
-      print(error);
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    checkConnection();
+  }
+
+  void _deviceDetail(BuildContext context, BluetoothDevice server) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return DetailPage(server: server);
+        },
+      ),
+    );
   }
 
   @override
@@ -48,7 +46,7 @@ class _DeviceCardState extends State<DeviceCard> {
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: Text(
-            "Dispositivo conectado",
+            "Dispositivo seleccionado",
             style: Theme.BBThemeData.textTheme.headline3,
           ),
         ),
@@ -59,7 +57,7 @@ class _DeviceCardState extends State<DeviceCard> {
                 Align(
                   alignment: Alignment.topRight,
                   child: TextButton(
-                    onPressed: checkConnection,
+                    onPressed: widget.closeDeviceConnection,
                     style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size(30, 30),
@@ -102,7 +100,7 @@ class _DeviceCardState extends State<DeviceCard> {
                                   .copyWith(color: Theme.BBColors.grey[400]),
                             ),
                             Text(
-                              isDeviceConnected
+                              widget.selectedDevice.isConnected
                                   ? "Conectado"
                                   : "Desconectado. Revise que su dispositivo está operativo",
                               style: Theme.BBThemeData.textTheme.bodyText1
@@ -125,7 +123,7 @@ class _DeviceCardState extends State<DeviceCard> {
                       ElevatedButton(
                           onPressed: () {},
                           child: Icon(Icons.settings, size: 30),
-                          style: isDeviceConnected
+                          style: widget.selectedDevice.isConnected
                               ? ElevatedButton.styleFrom(
                                   primary: Theme.BBThemeData.primaryColor,
                                   onPrimary: Theme.BBColors.blue[100],
@@ -139,9 +137,10 @@ class _DeviceCardState extends State<DeviceCard> {
                       SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () =>
+                              _deviceDetail(context, widget.selectedDevice),
                           child: Text('Monitorizar'),
-                          style: isDeviceConnected
+                          style: widget.selectedDevice.isConnected
                               ? null
                               : ElevatedButton.styleFrom(
                                   primary: Theme.BBColors.grey[300],

@@ -1,6 +1,6 @@
 {
-    "name": "flutter_bluetooth",
-    "short_name": "flutter_bluetooth",
+    "name": "bluetooth_bridge",
+    "short_name": "bluetooth_bridge",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

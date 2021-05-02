@@ -1,4 +1,4 @@
-name: flutter_bluetooth
+name: bluetooth_bridge
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -28,6 +28,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^0.22.0
   flutter_launcher_icons:
+
+flutter_icons:
+  image_path_android: "assets/icon.png"
+  image_path_ios: "assets/icon.png"
+  android: true
+  ios: true
 
 dev_dependencies:
   flutter_test:

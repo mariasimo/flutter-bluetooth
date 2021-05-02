@@ -1,4 +1,4 @@
-package com.example.flutter_bluetooth
+package com.example.bluetooth_bridge
 
 import io.flutter.embedding.android.FlutterActivity
 

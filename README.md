@@ -1,4 +1,4 @@
-# flutter_bluetooth
+# bluetooth_bridge
 
 A new Flutter project.
 

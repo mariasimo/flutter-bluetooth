@@ -4,7 +4,6 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'dart:core';
 
 import 'SelectBondedDevicePage.dart';
-import 'DetailPage.dart';
 import '../theme/theme.dart' as Theme;
 import '../components/EmptyCard.dart';
 import '../components/DeviceCard.dart';
@@ -23,6 +22,18 @@ class _MainPage extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+
+    if (_selectedDevice != null) {
+      BluetoothConnection.toAddress(_selectedDevice.address)
+          .then((_connection) {
+        print('Connected to the device');
+        connection = _connection;
+        setState(() {});
+      }).catchError((error) {
+        print('Cannot connect, exception occured');
+        print(error);
+      });
+    }
 
     // Get current state
     FlutterBluetoothSerial.instance.state.then((state) {
@@ -61,7 +72,7 @@ class _MainPage extends State<MainPage> {
 
     if (selectedDevice != null) {
       print('Connect -> selected ' + selectedDevice.address);
-      // _deviceDetail(context, selectedDevice);
+      print(selectedDevice.isConnected);
       setState(() {
         _selectedDevice = selectedDevice;
         _hasSelectedDevice = true;
@@ -83,6 +94,13 @@ class _MainPage extends State<MainPage> {
 
     future().then((_) {
       setState(() {});
+    });
+  }
+
+  void closeDeviceConnection() {
+    _selectedDevice = null;
+    setState(() {
+      _hasSelectedDevice = false;
     });
   }
 
@@ -118,7 +136,9 @@ class _MainPage extends State<MainPage> {
                 child: _hasSelectedDevice
                     ? new DeviceCard(
                         selectedDevice: _selectedDevice,
-                        handleExploreDevicesButton: seePairedDevices)
+                        handleExploreDevicesButton: seePairedDevices,
+                        closeDeviceConnection: closeDeviceConnection,
+                      )
                     : new EmptyCard(handleButtonPress: seePairedDevices),
               ),
               Divider(),
@@ -174,16 +194,6 @@ class _MainPage extends State<MainPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  void _deviceDetail(BuildContext context, BluetoothDevice server) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return DetailPage(server: server);
-        },
       ),
     );
   }

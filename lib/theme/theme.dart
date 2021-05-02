@@ -18,6 +18,11 @@ final ThemeData BBThemeData = new ThemeData(
       fontWeight: FontWeight.w600,
       color: BBColors.grey[900],
     ),
+    headline2: TextStyle(
+      fontSize: 21,
+      fontWeight: FontWeight.w600,
+      color: BBColors.grey[900],
+    ),
     headline3: TextStyle(
       fontSize: 14.0,
       fontWeight: FontWeight.w600,
@@ -47,6 +52,11 @@ final ThemeData BBThemeData = new ThemeData(
     ),
     margin: EdgeInsets.all(0),
   ),
+  appBarTheme: AppBarTheme(
+    backgroundColor: BBColors.grey[50],
+    elevation: 0,
+  ),
+  scaffoldBackgroundColor: BBColors.grey[50],
 );
 
 class BBColors {
@@ -102,5 +112,31 @@ class BBColors {
     700: Color(0xFF01276C),
     800: Color(0xFF012062),
     900: Color(0xFF00144F),
+  };
+
+  static const Map<int, Color> ruby = const <int, Color>{
+    50: Color(0xFFFFEBEC),
+    100: Color(0xFFFFCDD0),
+    200: Color(0xFFFFACB1),
+    300: Color(0xFFFE8B92),
+    400: Color(0xFFFE727A),
+    500: Color(0xFFFE5963),
+    600: Color(0xFFFE515B),
+    700: Color(0xFFFE4851),
+    800: Color(0xFFFE3E47),
+    900: Color(0xFFFD2E35),
+  };
+
+  static const Map<int, Color> yellow = const <int, Color>{
+    50: Color(0xFFFEF5EA),
+    100: Color(0xFFFEE5CB),
+    200: Color(0xFFFDD4A9),
+    300: Color(0xFFFCC387),
+    400: Color(0xFFFBB66D),
+    500: Color(0xFFFAA953),
+    600: Color(0xFFF9A24C),
+    700: Color(0xFFF99842),
+    800: Color(0xFFF88F39),
+    900: Color(0xFFF67E29),
   };
 }

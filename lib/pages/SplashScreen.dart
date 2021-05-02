@@ -66,7 +66,7 @@ class SplashScreenState extends State<SplashScreen> {
             children: <Widget>[
               Image.asset(
                 'assets/splash-icon.png',
-                height: 120,
+                height: 100,
                 fit: BoxFit.scaleDown,
               ),
               SizedBox(height: 40),
@@ -76,7 +76,8 @@ class SplashScreenState extends State<SplashScreen> {
                     color: Colors.white,
                     fontSize: 26.0,
                     fontWeight: FontWeight.w500),
-              )
+              ),
+              SizedBox(height: 40),
             ],
           ),
         ],

@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../BluetoothDeviceListEntry.dart';
+import 'package:bluetooth_bridge/constants.dart';
+import '../theme/theme.dart' as Theme;
+import 'dart:math';
 
 class SelectBondedDevicePage extends StatefulWidget {
   /// If true, on page start there is performed discovery upon the bonded devices.
@@ -30,6 +33,7 @@ class _DeviceWithAvailability extends BluetoothDevice {
 
 class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
   List<_DeviceWithAvailability> devices = [];
+  Random random = new Random();
 
   // Availability
   StreamSubscription<BluetoothDiscoveryResult> _discoveryStreamSubscription;
@@ -51,8 +55,6 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
     FlutterBluetoothSerial.instance
         .getBondedDevices()
         .then((List<BluetoothDevice> bondedDevices) {
-      print("BONDED");
-      print(bondedDevices.map((e) => e.isConnected));
       setState(() {
         devices = bondedDevices
             .map(
@@ -109,38 +111,67 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
   @override
   Widget build(BuildContext context) {
     List<BluetoothDeviceListEntry> list = devices
+        .asMap()
+        .entries
         .map((_device) => BluetoothDeviceListEntry(
-              device: _device.device,
-              rssi: _device.rssi,
-              enabled: _device.availability == _DeviceAvailability.yes,
+              device: _device.value.device,
+              rssi: _device.value.rssi,
+              enabled: _device.value.availability == _DeviceAvailability.yes,
               onTap: () {
-                Navigator.of(context).pop(_device.device);
+                Navigator.of(context).pop(_device.value.device);
               },
+              colorCombo: colorsList[_device.key],
+              iconNumber: _device.key + 1,
             ))
         .toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select device'),
-        actions: <Widget>[
-          _isDiscovering
-              ? FittedBox(
-                  child: Container(
-                    margin: new EdgeInsets.all(16.0),
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white,
+        title: null,
+      ),
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: Text(
+                  'Seleccionar dispositivo',
+                  style: Theme.BBThemeData.textTheme.headline2,
+                ),
+              ),
+              Expanded(
+                child: ListView(children: list),
+              ),
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  "Ajustes Bluetooth",
+                  style: Theme.BBThemeData.textTheme.headline3,
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: FlutterBluetoothSerial.instance.openSettings,
+                      label: Text('Vincular dispositivos'),
+                      icon: Icon(
+                        Icons.bluetooth,
+                        size: 24,
                       ),
                     ),
                   ),
-                )
-              : IconButton(
-                  icon: Icon(Icons.replay),
-                  onPressed: _restartDiscovery,
-                )
-        ],
+                  SizedBox(height: 100)
+                ],
+              ), // ListView(children: list)
+            ],
+          ),
+        ),
       ),
-      body: ListView(children: list),
     );
   }
 }

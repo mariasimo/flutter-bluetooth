@@ -7,7 +7,6 @@ class SelectBondedDevicePage extends StatefulWidget {
   /// If true, on page start there is performed discovery upon the bonded devices.
   /// Then, if they are not avaliable, they would be disabled from the selection.
   final bool checkAvailability;
-
   const SelectBondedDevicePage({this.checkAvailability = true});
 
   @override
@@ -24,7 +23,6 @@ class _DeviceWithAvailability extends BluetoothDevice {
   BluetoothDevice device;
   _DeviceAvailability availability;
   int rssi;
-
   _DeviceWithAvailability(this.device, this.availability, [this.rssi]);
 }
 
@@ -79,6 +77,8 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
   void _startDiscovery() {
     _discoveryStreamSubscription =
         FlutterBluetoothSerial.instance.startDiscovery().listen((r) {
+      print('DISCOVERY');
+      print(r);
       setState(() {
         Iterator i = devices.iterator;
         while (i.moveNext()) {

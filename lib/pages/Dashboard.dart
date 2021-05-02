@@ -4,9 +4,11 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'dart:core';
 
 import 'SelectBondedDevicePage.dart';
-import '../theme/theme.dart' as Theme;
-import '../components/EmptyCard.dart';
-import '../components/DeviceCard.dart';
+import 'package:bluetooth_bridge/theme/theme.dart' as Theme;
+import 'package:bluetooth_bridge/components/EmptyCard.dart';
+import 'package:bluetooth_bridge/components/DeviceCard.dart';
+import 'package:bluetooth_bridge/utils/deviceDetail.dart';
+import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -16,7 +18,7 @@ class Dashboard extends StatefulWidget {
 class _Dashboard extends State<Dashboard> {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
   BluetoothConnection connection;
-  BluetoothDevice _selectedDevice;
+  BluetoothStyledDevice _selectedDevice;
   bool _hasSelectedDevice = false;
 
   @override
@@ -24,7 +26,7 @@ class _Dashboard extends State<Dashboard> {
     super.initState();
 
     if (_selectedDevice != null) {
-      BluetoothConnection.toAddress(_selectedDevice.address)
+      BluetoothConnection.toAddress(_selectedDevice.values.address)
           .then((_connection) {
         print('Connected to the device');
         connection = _connection;
@@ -62,7 +64,8 @@ class _Dashboard extends State<Dashboard> {
   }
 
   void seePairedDevices() async {
-    final BluetoothDevice selectedDevice = await Navigator.of(context).push(
+    final BluetoothStyledDevice selectedDevice =
+        await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
           return SelectBondedDevicePage();
@@ -71,8 +74,9 @@ class _Dashboard extends State<Dashboard> {
     );
 
     if (selectedDevice != null) {
-      print('Connect -> selected ' + selectedDevice.address);
-      print(selectedDevice.isConnected);
+      print('Connect -> selected ' + selectedDevice.values.address);
+      // DeviceDetail(context: context, server: selectedDevice).goToPage();
+
       setState(() {
         _selectedDevice = selectedDevice;
         _hasSelectedDevice = true;

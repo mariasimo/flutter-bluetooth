@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:bluetooth_bridge/theme/theme.dart' as Theme;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
 
 class BluetoothDeviceListEntry extends Card {
   BluetoothDeviceListEntry({
-    @required BluetoothDevice device,
+    @required BluetoothStyledDevice device,
     int rssi,
     GestureTapCallback onTap,
     GestureLongPressCallback onLongPress,
-    List<Color> colorCombo,
-    int iconNumber,
   }) : super(
           margin: EdgeInsets.only(bottom: 10),
           child: InkWell(
@@ -31,12 +29,12 @@ class BluetoothDeviceListEntry extends Card {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            color: colorCombo.first,
+                            color: device.colorCombo.first,
                             child: Padding(
                               padding: const EdgeInsets.all(16),
                               child: SvgPicture.asset(
-                                'assets/device-$iconNumber.svg',
-                                color: colorCombo[1],
+                                'assets/device-${device.iconNumber}.svg',
+                                color: device.colorCombo[1],
                                 width: 25,
                               ),
                             ),
@@ -47,12 +45,12 @@ class BluetoothDeviceListEntry extends Card {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                device.name ?? 'Unknown device',
+                                device.values.name ?? 'Unknown device',
                                 style: Theme.BBThemeData.textTheme.subtitle1
                                     .copyWith(color: Theme.BBColors.grey[400]),
                               ),
                               Text(
-                                device.isConnected
+                                device.values.isConnected
                                     ? 'Conectado'
                                     : 'Desconectado',
                                 style: Theme.BBThemeData.textTheme.subtitle2

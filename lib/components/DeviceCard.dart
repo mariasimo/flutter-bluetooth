@@ -1,3 +1,5 @@
+import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
+import 'package:bluetooth_bridge/utils/deviceDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:bluetooth_bridge/pages/DetailPage.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -5,7 +7,7 @@ import '../theme/theme.dart' as Theme;
 import 'package:flutter_svg/flutter_svg.dart';
 
 class DeviceCard extends StatefulWidget {
-  final BluetoothDevice selectedDevice;
+  final BluetoothStyledDevice selectedDevice;
   final Function handleExploreDevicesButton;
   final Function closeDeviceConnection;
 
@@ -21,21 +23,9 @@ class DeviceCard extends StatefulWidget {
 }
 
 class _DeviceCardState extends State<DeviceCard> {
-  final String assetName = 'assets/device-1.svg';
-
   @override
   void initState() {
     super.initState();
-  }
-
-  void _deviceDetail(BuildContext context, BluetoothDevice server) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return DetailPage(server: server);
-        },
-      ),
-    );
   }
 
   @override
@@ -80,12 +70,13 @@ class _DeviceCardState extends State<DeviceCard> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28),
                           ),
-                          color: Theme.BBColors.navy[500],
+                          color: widget.selectedDevice.colorCombo[0],
                           child: Padding(
                             padding: const EdgeInsets.all(32),
                             child: SvgPicture.asset(
-                              assetName,
+                              'assets/device-${widget.selectedDevice.iconNumber}.svg',
                               width: 40,
+                              color: widget.selectedDevice.colorCombo[1],
                             ),
                           ),
                         ),
@@ -95,12 +86,12 @@ class _DeviceCardState extends State<DeviceCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.selectedDevice.name,
+                              widget.selectedDevice.values.name,
                               style: Theme.BBThemeData.textTheme.subtitle1
                                   .copyWith(color: Theme.BBColors.grey[400]),
                             ),
                             Text(
-                              widget.selectedDevice.isConnected
+                              widget.selectedDevice.values.isConnected
                                   ? "Conectado"
                                   : "Desconectado. Revise que su dispositivo está operativo",
                               style: Theme.BBThemeData.textTheme.bodyText1
@@ -137,8 +128,10 @@ class _DeviceCardState extends State<DeviceCard> {
                       SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () =>
-                              _deviceDetail(context, widget.selectedDevice),
+                          onPressed: () => DeviceDetail(
+                                  context: context,
+                                  server: widget.selectedDevice)
+                              .goToPage(),
                           child: Text('Monitorizar'),
                           style: widget.selectedDevice.isConnected
                               ? null

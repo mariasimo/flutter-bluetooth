@@ -1,8 +1,9 @@
+import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import '../BluetoothDeviceListEntry.dart';
+import 'package:bluetooth_bridge/components/BluetoothDeviceListEntry.dart';
 import 'package:bluetooth_bridge/constants.dart';
-import '../theme/theme.dart' as Theme;
+import 'package:bluetooth_bridge/theme/theme.dart' as Theme;
 
 class SelectBondedDevicePage extends StatefulWidget {
   const SelectBondedDevicePage();
@@ -10,44 +11,30 @@ class SelectBondedDevicePage extends StatefulWidget {
   _SelectBondedDevicePage createState() => new _SelectBondedDevicePage();
 }
 
-class _DeviceWithAvailability extends BluetoothDevice {
-  BluetoothDevice device;
-  int rssi;
-
-  _DeviceWithAvailability(this.device, [this.rssi]);
-}
-
 class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
-  List<_DeviceWithAvailability> devices = [];
-  bool _isDiscovering = false;
   _SelectBondedDevicePage();
+  List<BluetoothStyledDevice> devices = [];
 
   @override
   void initState() {
     super.initState();
-
-    // Setup a list of the bonded devices
-    FlutterBluetoothSerial.instance
-        .getBondedDevices()
-        .then((List<BluetoothDevice> bondedDevices) {
-      setState(() {
-        devices = bondedDevices
-            .map((device) => _DeviceWithAvailability(device))
-            .toList();
-      });
-    });
+    _resetBondedDevicesList();
   }
 
-  void _restartDiscovery() {
-    // Setup a list of the bonded devices
+  void _resetBondedDevicesList() {
     FlutterBluetoothSerial.instance
         .getBondedDevices()
         .then((List<BluetoothDevice> bondedDevices) {
-      print("bondedDevices");
-      print(bondedDevices);
       setState(() {
         devices = bondedDevices
-            .map((device) => _DeviceWithAvailability(device))
+            .asMap()
+            .entries
+            .map(
+              (device) => BluetoothStyledDevice(
+                  values: device.value,
+                  colorCombo: colorsList[device.key],
+                  iconNumber: device.key + 1),
+            )
             .toList();
       });
     });
@@ -61,16 +48,11 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
   @override
   Widget build(BuildContext context) {
     List<BluetoothDeviceListEntry> list = devices
-        .asMap()
-        .entries
         .map((_device) => BluetoothDeviceListEntry(
-              device: _device.value.device,
-              rssi: _device.value.rssi,
+              device: _device,
               onTap: () {
-                Navigator.of(context).pop(_device.value.device);
+                Navigator.of(context).pop(_device);
               },
-              colorCombo: colorsList[_device.key],
-              iconNumber: _device.key + 1,
             ))
         .toList();
 
@@ -93,21 +75,15 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
                       'Seleccionar dispositivo',
                       style: Theme.BBThemeData.textTheme.headline2,
                     ),
-                    _isDiscovering
-                        ? FittedBox(
-                            child: Container(
-                              margin: new EdgeInsets.all(16.0),
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            ),
-                          )
-                        : IconButton(
-                            icon: Icon(Icons.replay),
-                            onPressed: _restartDiscovery,
-                          )
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Icon(Icons.replay, size: 30),
+                      style: ElevatedButton.styleFrom(
+                        primary: Theme.BBColors.blue[100],
+                        onPrimary: Theme.BBColors.blue[500],
+                        padding: EdgeInsets.all(14),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -170,6 +170,7 @@ class _Dashboard extends State<Dashboard> {
                                 .copyWith(color: Theme.BBColors.grey[300])),
                     value: _bluetoothState.isEnabled,
                     onChanged: handleBTEnablement,
+                    activeColor: Theme.BBColors.blue[500],
                   ),
                 ),
               ),

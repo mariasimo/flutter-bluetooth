@@ -4,6 +4,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:bluetooth_bridge/components/BluetoothDeviceListEntry.dart';
 import 'package:bluetooth_bridge/constants.dart';
 import 'package:bluetooth_bridge/theme/theme.dart' as Theme;
+import 'package:bluetooth_bridge/components/PageHeader.dart';
 
 class SelectBondedDevicePage extends StatefulWidget {
   const SelectBondedDevicePage();
@@ -66,26 +67,9 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Seleccionar dispositivo',
-                      style: Theme.BBThemeData.textTheme.headline2,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Icon(Icons.replay, size: 30),
-                      style: ElevatedButton.styleFrom(
-                        primary: Theme.BBColors.blue[100],
-                        onPrimary: Theme.BBColors.blue[500],
-                        padding: EdgeInsets.all(14),
-                      ),
-                    ),
-                  ],
-                ),
+              PageHeader(
+                pageTitle: "Seleccionar dispositivo",
+                onPressed: _resetBondedDevicesList,
               ),
               Expanded(
                 child: ListView(children: list),

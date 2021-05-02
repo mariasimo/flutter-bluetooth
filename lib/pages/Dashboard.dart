@@ -9,6 +9,7 @@ import 'package:bluetooth_bridge/components/EmptyCard.dart';
 import 'package:bluetooth_bridge/components/DeviceCard.dart';
 import 'package:bluetooth_bridge/utils/deviceDetail.dart';
 import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
+import 'package:bluetooth_bridge/components/PageHeader.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -75,7 +76,7 @@ class _Dashboard extends State<Dashboard> {
 
     if (selectedDevice != null) {
       print('Connect -> selected ' + selectedDevice.values.address);
-      // DeviceDetail(context: context, server: selectedDevice).goToPage();
+      DeviceDetail(context: context, device: selectedDevice).goToPage();
 
       setState(() {
         _selectedDevice = selectedDevice;
@@ -128,12 +129,9 @@ class _Dashboard extends State<Dashboard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                child: Text(
-                  'Dashboard',
-                  style: Theme.BBThemeData.textTheme.headline1,
-                ),
-                padding: EdgeInsets.only(bottom: 16),
+              PageHeader(
+                pageTitle: 'Dashboard',
+                styleHeading: Theme.BBThemeData.textTheme.headline1,
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 32),

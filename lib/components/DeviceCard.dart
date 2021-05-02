@@ -117,7 +117,7 @@ class _DeviceCardState extends State<DeviceCard> {
                         child: ElevatedButton(
                           onPressed: () => DeviceDetail(
                                   context: context,
-                                  server: widget.selectedDevice)
+                                  device: widget.selectedDevice)
                               .goToPage(),
                           child: Text('Monitorizar'),
                           style: widget.selectedDevice.isConnected

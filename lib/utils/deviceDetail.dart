@@ -4,15 +4,15 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class DeviceDetail {
   BuildContext context;
-  BluetoothDevice server;
+  BluetoothDevice device;
 
-  DeviceDetail({this.context, this.server});
+  DeviceDetail({this.context, this.device});
 
   void goToPage() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          return DetailPage(server: server);
+          return DetailPage(device: device);
         },
       ),
     );

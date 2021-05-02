@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:bluetooth_bridge/theme/theme.dart' as Theme;
+import 'package:bluetooth_bridge/components/PageHeader.dart';
 
 class DetailPage extends StatefulWidget {
-  final BluetoothDevice server;
-  const DetailPage({this.server});
+  final BluetoothStyledDevice device;
+  const DetailPage({this.device});
 
   @override
   _DetailPage createState() => new _DetailPage();
@@ -16,7 +19,6 @@ class DetailPage extends StatefulWidget {
 class _DataFromDevice {
   String dataKey;
   String dataValue;
-
   _DataFromDevice(this.dataKey, this.dataValue);
 }
 
@@ -33,7 +35,6 @@ class _DetailPage extends State<DetailPage> {
     Future.delayed(Duration(seconds: 1)).then((_) {
       if (this.mounted) {
         setState(() {
-          print("1 second passed");
           _sendMessage("monitor*");
         });
       }
@@ -45,8 +46,8 @@ class _DetailPage extends State<DetailPage> {
   void initState() {
     super.initState();
 
-    BluetoothConnection.toAddress(widget.server.address).then((_connection) {
-      print('Connected to the device');
+    BluetoothConnection.toAddress(widget.device.values.address)
+        .then((_connection) {
       connection = _connection;
       setState(() {
         isConnecting = false;
@@ -85,63 +86,78 @@ class _DetailPage extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String pageTitle = isConnecting
+        ? "Conectando..."
+        : isConnected
+            ? "Conectado"
+            : "Error de conexión";
     return Scaffold(
       appBar: AppBar(
-          title: (isConnecting
-              ? Text('Connecting to ' + widget.server.name + '...')
-              : isConnected
-                  ? Text('Data from device ' + widget.server.name)
-                  : Text('Not connected:' + widget.server.name))),
-      body: Column(
-        children: <Widget>[
-          Text(widget.server.isConnected ? "con" : "not"),
-          ElevatedButton(
-            onPressed: () {
-              _sendMessage("monitor*");
-            },
-            child: Text("Refrescar"),
+        title: null,
+      ),
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              PageHeader(
+                pageTitle: pageTitle,
+                onPressed: () {},
+                styleHeading: Theme.BBThemeData.textTheme.headline1,
+              ),
+              Text(widget.device.values.isConnected ? "con" : "not"),
+              ElevatedButton(
+                onPressed: () {
+                  _sendMessage("monitor*");
+                },
+                child: Text("Refrescar"),
+              ),
+              Flexible(
+                child: ListView.builder(
+                  itemCount: dataFromDevice.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 2),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey[800],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 24, horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              dataFromDevice[index].dataKey,
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                            Text(
+                              dataFromDevice[index].dataValue,
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          Flexible(
-            child: ListView.builder(
-              itemCount: dataFromDevice.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey[800],
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 24, horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          dataFromDevice[index].dataKey,
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                        Text(
-                          dataFromDevice[index].dataValue,
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

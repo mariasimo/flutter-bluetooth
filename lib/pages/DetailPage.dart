@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:bluetooth_bridge/components/DeviceBadge.dart';
 import 'package:bluetooth_bridge/utils/bluetoothStyledDevice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -103,52 +104,69 @@ class _DetailPage extends State<DetailPage> {
             children: <Widget>[
               PageHeader(
                 pageTitle: pageTitle,
-                onPressed: () {},
-                styleHeading: Theme.BBThemeData.textTheme.headline1,
-              ),
-              Text(widget.device.values.isConnected ? "con" : "not"),
-              ElevatedButton(
                 onPressed: () {
                   _sendMessage("monitor*");
                 },
-                child: Text("Refrescar"),
+                styleHeading: Theme.BBThemeData.textTheme.headline1,
+              ),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(right: 20),
+                        child: DeviceBadge(selectedDevice: widget.device)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.device.values.name ?? 'Unknown device',
+                            style: Theme.BBThemeData.textTheme.subtitle1
+                                .copyWith(color: Theme.BBColors.grey[400]),
+                          ),
+                          Text(
+                            widget.device.values.isConnected
+                                ? 'Conectado'
+                                : 'Desconectado',
+                            style: Theme.BBThemeData.textTheme.subtitle2
+                                .copyWith(color: Theme.BBColors.grey[400]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Divider(),
               ),
               Flexible(
                 child: ListView.builder(
                   itemCount: dataFromDevice.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2, horizontal: 2),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey[800],
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 3,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 24, horizontal: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              dataFromDevice[index].dataKey,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                            Text(
+                      padding: const EdgeInsets.symmetric(horizontal: 1),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(color: Theme.BBColors.grey[100])),
+                        elevation: 0,
+                        margin: EdgeInsets.only(bottom: 12),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 4),
+                          child: ListTile(
+                            title: Text(dataFromDevice[index].dataKey,
+                                style: Theme.BBThemeData.textTheme.headline3),
+                            trailing: Text(
                               dataFromDevice[index].dataValue,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
+                              style: Theme.BBThemeData.textTheme.bodyText1
+                                  .copyWith(color: Theme.BBColors.grey[400]),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     );

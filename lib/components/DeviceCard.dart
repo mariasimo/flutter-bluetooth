@@ -36,7 +36,7 @@ class _DeviceCardState extends State<DeviceCard> {
           padding: const EdgeInsets.only(bottom: 16),
           child: Text(
             "Dispositivo seleccionado",
-            style: Theme.BBThemeData.textTheme.headline3,
+            style: Theme.BBThemeData.textTheme.headline4,
           ),
         ),
         Card(

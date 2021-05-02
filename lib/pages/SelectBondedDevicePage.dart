@@ -79,7 +79,7 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
                   "Ajustes Bluetooth",
-                  style: Theme.BBThemeData.textTheme.headline3,
+                  style: Theme.BBThemeData.textTheme.headline4,
                 ),
               ),
               Row(

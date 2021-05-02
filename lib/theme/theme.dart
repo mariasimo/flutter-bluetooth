@@ -24,12 +24,18 @@ final ThemeData BBThemeData = new ThemeData(
       color: BBColors.grey[900],
     ),
     headline3: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: BBColors.grey[600],
+    ),
+    headline4: TextStyle(
       fontSize: 14.0,
       fontWeight: FontWeight.w600,
       color: BBColors.grey[900],
     ),
     subtitle1: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
     button: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
+    bodyText1: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(

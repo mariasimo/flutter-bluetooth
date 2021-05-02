@@ -148,7 +148,7 @@ class _Dashboard extends State<Dashboard> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   "Ajustes Bluetooth",
-                  style: Theme.BBThemeData.textTheme.headline3,
+                  style: Theme.BBThemeData.textTheme.headline4,
                 ),
               ),
               Card(
